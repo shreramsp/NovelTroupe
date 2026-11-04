@@ -1,0 +1,185 @@
+/* Story Agents - visual design. Loaded by ui.load_css(). */
+@import url('https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap');
+
+:root {
+  --sa-panel: #ffffff;
+  --sa-border: #e7e5df;
+  --sa-text: #1d1c1a;
+  --sa-muted: #77746c;
+  --sa-accent: #5046e5;
+  --sa-accent-tint: #efeefc;
+  --sa-hover: #f4f3ef;
+  --sa-warn: #b45309;
+  --sa-warn-tint: #fdf1e6;
+  --sa-serif: 'Literata', Georgia, 'Times New Roman', serif;
+  --sa-panel-h: calc(100vh - 28px);
+}
+
+/* ---------- page chrome ---------- */
+[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecoration"] { display: none !important; }
+[data-testid="stMainBlockContainer"] { padding: 14px 14px 0 14px !important; max-width: 100% !important; }
+[data-stale="true"] { opacity: 1 !important; transition: none !important; }
+
+/* ---------- the three panels ---------- */
+.st-key-panel_left, .st-key-panel_center, .st-key-panel_right {
+  background: var(--sa-panel);
+  border: 1px solid var(--sa-border);
+  border-radius: 16px;
+  height: var(--sa-panel-h) !important;
+  flex: none !important; /* Streamlit's flex-basis would otherwise override the height */
+  box-shadow: 0 1px 2px rgba(28, 25, 18, .04), 0 8px 24px -12px rgba(28, 25, 18, .08);
+  flex-wrap: nowrap !important;
+}
+.st-key-panel_left   { padding: 18px 10px 12px; overflow: hidden !important; gap: 4px !important; }
+.st-key-panel_center { padding: 30px 56px 56px; overflow-y: auto !important; }
+.st-key-panel_right  { padding: 16px 16px 12px; overflow: hidden !important; }
+
+/* ---------- left: brand, sections, lists ---------- */
+.sa-brand { display: flex; align-items: center; gap: 10px; padding: 0 8px 10px; }
+.sa-logo {
+  width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
+  background: linear-gradient(135deg, #5046e5, #8b5cf6);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-family: var(--sa-serif); font-weight: 600; font-size: 17px;
+}
+.sa-brand-name { font-weight: 700; font-size: 15.5px; letter-spacing: -0.01em; color: var(--sa-text); }
+.sa-section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--sa-muted); padding-left: 8px;
+}
+.st-key-head_chapters, .st-key-head_characters { margin-top: 10px; padding-right: 2px; }
+.st-key-head_chapters button, .st-key-head_characters button { font-size: 12.5px; color: var(--sa-muted); min-height: 0; }
+.st-key-head_chapters button:hover, .st-key-head_characters button:hover { color: var(--sa-accent); }
+
+/* each list gets half of what is left after the brand, story link and the two section headers */
+.st-key-chapters_list, .st-key-characters_list {
+  height: calc((100vh - 250px) / 2) !important; flex: none !important;
+  overflow-y: auto !important; overflow-x: hidden; gap: 1px !important; padding-bottom: 6px;
+}
+.st-key-chapters_list { border-bottom: 1px solid var(--sa-border); }
+
+.st-key-chapters_list button, .st-key-characters_list button, .st-key-nav_story button {
+  width: 100%; justify-content: flex-start !important; gap: 10px;
+  padding: 6px 8px !important; min-height: 38px; border-radius: 9px; color: var(--sa-text);
+}
+.st-key-chapters_list button > div, .st-key-characters_list button > div, .st-key-nav_story button > div {
+  min-width: 0; flex: 1 1 auto; justify-content: flex-start !important;
+}
+.st-key-chapters_list button [data-testid="stMarkdownContainer"],
+.st-key-characters_list button [data-testid="stMarkdownContainer"],
+.st-key-nav_story button [data-testid="stMarkdownContainer"] { text-align: left; min-width: 0; }
+.st-key-chapters_list button p, .st-key-characters_list button p, .st-key-nav_story button p {
+  font-size: 14px; font-weight: 500; text-align: left;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.st-key-chapters_list button:hover, .st-key-characters_list button:hover, .st-key-nav_story button:hover {
+  background: var(--sa-hover); color: var(--sa-text);
+}
+.st-key-nav_story button p { font-weight: 600; }
+
+/* chapter number and character avatar, drawn in front of each row */
+.st-key-chapters_list button::before {
+  font-size: 11.5px; font-weight: 600; color: var(--sa-muted);
+  font-variant-numeric: tabular-nums; width: 20px; flex-shrink: 0; text-align: left;
+}
+.st-key-characters_list button::before {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  color: #fff; font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+.st-key-characters_list button::after {
+  margin-left: auto; padding-left: 8px; font-size: 11.5px; color: var(--sa-muted); flex-shrink: 0;
+}
+
+.sa-empty { color: var(--sa-muted); font-size: 13.5px; padding: 6px 8px; line-height: 1.5; }
+
+/* ---------- center: manuscript ---------- */
+.sa-eyebrow {
+  font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--sa-accent);
+}
+.sa-title {
+  font-family: var(--sa-serif); font-weight: 600; font-size: 40px; line-height: 1.15;
+  letter-spacing: -0.015em; color: var(--sa-text); margin: 4px 0 12px;
+}
+.sa-subtitle { color: var(--sa-muted); font-size: 15px; line-height: 1.6; margin: 0 0 18px; max-width: 64ch; }
+.sa-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 6px; }
+.sa-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; border-radius: 999px;
+  background: var(--sa-hover); font-size: 12.5px; color: #4b4943; font-weight: 500;
+}
+.sa-chip.plain { padding-left: 10px; color: var(--sa-muted); background: transparent; border: 1px solid var(--sa-border); }
+.sa-chip.warn { padding-left: 10px; background: var(--sa-warn-tint); color: var(--sa-warn); }
+
+.sa-manuscript {
+  font-family: var(--sa-serif); font-size: 19px; line-height: 1.85; color: #2b2a26;
+  max-width: 68ch; margin: 34px auto 40px;
+}
+.sa-manuscript p { margin: 0 0 1.15em; }
+.sa-manuscript p:first-child::first-letter {
+  float: left; font-size: 3.3em; line-height: .92; padding: 6px 10px 0 0; font-weight: 600; color: var(--sa-accent);
+}
+.sa-divider { text-align: center; color: #c9c6bd; letter-spacing: .6em; margin: 8px 0 24px; }
+.st-key-manuscript_editor textarea {
+  font-family: var(--sa-serif) !important; font-size: 18px !important; line-height: 1.8 !important;
+  padding: 22px 26px !important; color: #2b2a26 !important;
+}
+
+/* memories timeline */
+.sa-timeline { border-left: 2px solid var(--sa-border); margin: 10px 0 0 6px; padding-left: 22px; }
+.sa-event { position: relative; margin-bottom: 22px; }
+.sa-event::before {
+  content: ""; position: absolute; left: -29px; top: 4px; width: 12px; height: 12px; border-radius: 50%;
+  background: #fff; border: 2px solid var(--sa-accent);
+}
+.sa-event-label { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--sa-muted); }
+.sa-event-text { font-family: var(--sa-serif); font-size: 16.5px; line-height: 1.7; color: #2b2a26; margin-top: 4px; }
+.sa-event-change { font-size: 14px; color: var(--sa-accent); margin-top: 6px; }
+
+/* objection cards */
+.sa-quote {
+  font-family: var(--sa-serif); font-style: italic; font-size: 17px; line-height: 1.65; color: #2b2a26;
+  border-left: 3px solid var(--sa-accent); padding: 2px 0 2px 14px; margin: 10px 0;
+}
+.sa-beat { font-size: 13.5px; color: var(--sa-muted); line-height: 1.55; }
+
+/* ---------- avatars ---------- */
+.sa-avatar {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; color: #fff;
+  font-weight: 600; font-size: 12.5px; display: inline-flex; align-items: center; justify-content: center;
+}
+.sa-avatar.sm { width: 20px; height: 20px; font-size: 10.5px; }
+.sa-avatar.lg { width: 64px; height: 64px; font-size: 27px; font-family: var(--sa-serif); }
+.sa-avatar.director { background: linear-gradient(135deg, #5046e5, #8b5cf6); }
+
+/* ---------- right: conversation ---------- */
+.sa-chat-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.sa-chat-name { font-weight: 600; font-size: 15px; color: var(--sa-text); line-height: 1.2; }
+.sa-chat-sub { font-size: 12px; color: var(--sa-muted); line-height: 1.3; }
+.st-key-chat_header { border-bottom: 1px solid var(--sa-border); padding-bottom: 12px; flex-wrap: nowrap !important; }
+.st-key-chat_header > div:first-child { min-width: 0; flex: 1 1 auto; }
+.sa-chat-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.sa-thread {
+  height: calc(100vh - 236px); overflow-y: auto; display: flex; flex-direction: column-reverse;
+  gap: 14px; padding: 12px 2px 6px;
+}
+.sa-msg { display: flex; gap: 9px; align-items: flex-end; }
+.sa-msg.author { justify-content: flex-end; }
+.sa-body { max-width: 86%; min-width: 0; }
+.sa-name { font-size: 11.5px; font-weight: 600; color: var(--sa-muted); margin: 0 0 3px 4px; }
+.sa-bubble {
+  background: var(--sa-hover); color: var(--sa-text); border-radius: 16px 16px 16px 5px;
+  padding: 9px 13px; font-size: 14.5px; line-height: 1.55; overflow-wrap: anywhere;
+}
+.sa-msg.author .sa-bubble { background: var(--sa-accent); color: #fff; border-radius: 16px 16px 5px 16px; max-width: 86%; }
+.sa-typing { font-size: 12.5px; color: var(--sa-muted); padding: 2px 0 0 38px; }
+.sa-welcome { margin: auto 0; text-align: center; padding: 24px 18px; color: var(--sa-muted); font-size: 13.5px; line-height: 1.6; }
+.sa-welcome .sa-avatar { margin-bottom: 10px; }
+.sa-welcome b { color: var(--sa-text); display: block; font-size: 15px; margin-bottom: 4px; }
+
+/* ---------- small screens: stack the panels ---------- */
+@media (max-width: 1000px) {
+  .st-key-panel_left, .st-key-panel_center, .st-key-panel_right { height: auto; }
+  .st-key-panel_center { padding: 22px; }
+  .sa-thread { height: 60vh; }
+}

@@ -1,0 +1,7 @@
+.env
+# your story (characters, chapters, chats) stays on your machine
+data/
+.venv/
+__pycache__/
+usage.log
+.DS_Store
