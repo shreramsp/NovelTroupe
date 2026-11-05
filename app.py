@@ -1,40 +1,42 @@
-"""NovelSpark - Streamlit UI. Run with: streamlit run app.py
+"""NovelTroupe - run with: streamlit run app.py
 
-Three panels:
-  left    chapters (top) and characters (bottom)          views.left_panel
-  center  the manuscript: read, write, generate, profiles  views.center_panel
-  right   one conversation: the Director or any character  chat.chat_panel
+Pages (the current page is kept in the URL, e.g. ?page=studio&story=s_...):
+  landing   the public front page              landing.landing_page
+  login     sign in / create account           landing.auth_page
+  library   your stories                       library.library_page
+  new       start a story: pick its format     library.new_story_page
+  studio    write one story (three panels)     studio.studio_page
 """
 
 import streamlit as st
 
-import chat
+import landing
+import library
 import storage
+import studio
 import ui
-import views
 
-APP_NAME = "NovelSpark"
-
-st.set_page_config(page_title=APP_NAME, page_icon=":material/auto_stories:", layout="wide",
-                   initial_sidebar_state="collapsed")
+st.set_page_config(page_title=f"{ui.APP_NAME} · {ui.TAGLINE}", page_icon=":material/auto_stories:",
+                   layout="wide", initial_sidebar_state="collapsed")
 ui.load_css()
+ui.run_browser_actions()
 ui.apply_pending()
 
-story = storage.load_story()
-characters = storage.load_all_characters()
-chapters = storage.load_all_chapters()
+user = ui.current_user()
+page = ui.page()
 
-if "view" not in st.session_state:  # open the latest chapter, or the composer for a new story
-    st.session_state["view"] = {"kind": "chapter", "number": chapters[-1]["number"]} if chapters else {"kind": "compose"}
+if user is None:
+    if page in ("login", "signup"):
+        landing.auth_page(page)
+    else:
+        landing.landing_page(None)
+elif page == "studio" and (story_dir := storage.find_story(user["id"], st.query_params.get("story"))):
+    studio.studio_page(story_dir, st.query_params["story"])
+elif page == "new":
+    library.new_story_page(user)
+elif page == "":
+    landing.landing_page(user)
+else:
+    library.library_page(user)
 
-left, center, right = st.columns([1, 2.5, 1.45], gap="small")
-with left, st.container(key="panel_left"):
-    views.left_panel(APP_NAME, story, chapters, characters)
-with center, st.container(key="panel_center"):
-    views.center_panel(story, chapters, characters)
-with right, st.container(key="panel_right"):
-    slot, message = chat.chat_panel(chapters, characters)
-
-if message:
-    chat.handle(message, slot, story, chapters, characters)
 ui.show_toast()

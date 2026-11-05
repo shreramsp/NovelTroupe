@@ -1,0 +1,31 @@
+
+/* NovelTroupe - dark theme colours (added after style.css when the dark theme is active). */
+:root {
+  --sa-bg: #0f1412;            /* deep green-black */
+  --sa-panel: #161c19;
+  --sa-panel-2: #1e2622;
+  --sa-border: #2a3430;
+  --sa-text: #e9e6dc;
+  --sa-prose: #d9d5c9;
+  --sa-muted: #97a09a;
+  --sa-accent: #84c2ab;        /* sage */
+  --sa-accent-2: #a7d6c4;
+  --sa-accent-tint: rgba(132, 194, 171, .13);
+  --sa-solid: #2f6f5f;
+  --sa-gold: #d6a960;
+  --sa-gold-solid: #a77a37;
+  --sa-gold-tint: rgba(214, 169, 96, .15);
+  --sa-info: #8fb4dd;
+  --sa-info-tint: rgba(143, 180, 221, .14);
+  --sa-author-bubble: #2f6f5f;
+  --sa-warn: #f0a75f;
+  --sa-warn-tint: rgba(240, 167, 95, .13);
+  --sa-divider: #3d4843;
+  --sa-danger: #f28b82;
+  --sa-danger-tint: rgba(242, 139, 130, .13);
+  --sa-ok: #6fcf97;
+  --sa-glow-1: rgba(132, 194, 171, .06);
+  --sa-glow-2: rgba(214, 169, 96, .05);
+  --sa-shadow: 0 1px 2px rgba(0, 0, 0, .35), 0 14px 34px -18px rgba(0, 0, 0, .7);
+  --sa-shadow-lg: 0 2px 8px rgba(0, 0, 0, .4), 0 34px 70px -28px rgba(0, 0, 0, .85);
+}

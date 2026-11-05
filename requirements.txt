@@ -1,3 +1,5 @@
 streamlit>=1.46
 openai>=1.50
 python-dotenv>=1.0
+pillow
+requests

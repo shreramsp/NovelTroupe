@@ -1,14 +1,26 @@
+# Shared look for both themes. The colours for each theme are in the light and dark sections below;
+# the theme button in the app switches between them.
 [theme]
-base = "light"
-primaryColor = "#5046e5"
-backgroundColor = "#f4f3ef"
-secondaryBackgroundColor = "#f1f0ec"
-textColor = "#1d1c1a"
-borderColor = "#e5e3dc"
-showWidgetBorder = true
-baseRadius = "10px"
-baseFontSize = 15
 font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+baseFontSize = 15
+baseRadius = "8px"
+showWidgetBorder = true
+
+# Pine & brass on warm paper
+[theme.light]
+primaryColor = "#24594d"
+backgroundColor = "#f4efe6"
+secondaryBackgroundColor = "#eee8dc"
+textColor = "#1c201e"
+borderColor = "#e0d8c6"
+
+# Sage on deep green-black
+[theme.dark]
+primaryColor = "#3a8a73"
+backgroundColor = "#0f1412"
+secondaryBackgroundColor = "#1e2622"
+textColor = "#e9e6dc"
+borderColor = "#2c3631"
 
 [client]
 toolbarMode = "minimal"

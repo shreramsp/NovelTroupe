@@ -1,4 +1,4 @@
-"""The right panel: one conversation box for the Director and every character.
+"""The right panel: Chat (the Director or any character) and the Cast room (see castroom.py).
 
 - Talking to the Director: it answers questions, or acts on what you say (fills in the next
   chapter, suggests profile changes, drafts a new character, or passes a question to a character).
@@ -11,24 +11,42 @@ import html
 import streamlit as st
 
 import agents
+import castroom
 import storage
 import ui
 from ui import DIRECTOR
 
+CHAT, ROOM = "Chat", "Cast room"
 
-def chat_panel(chapters, characters):
+
+def right_panel(story, fmt, chapters, characters):
+    """Draw the right panel. Returns (slot, value, kind): kind is "chat" or "room" for the handler."""
+    st.session_state.setdefault("right_tab", CHAT)
+    tab = st.segmented_control("Panel", [CHAT, ROOM], key="right_tab", required=True, label_visibility="collapsed",
+                               width="stretch",
+                               format_func=lambda t: f":material/{'forum' if t == CHAT else 'groups'}: {t}")
+    if tab == ROOM:
+        slot, value = castroom.room_panel(story, fmt, characters)
+        return slot, value, "room"
+    slot, value = chat_panel(fmt, chapters, characters)
+    return slot, value, "chat"
+
+
+def chat_panel(fmt, chapters, characters):
     """Draw the panel. Returns (slot, value): the chat_input value is handled later by handle()."""
     names = [c["name"] for c in characters]
     if st.session_state.get("chat_with") not in [DIRECTOR] + names:
         st.session_state["chat_with"] = DIRECTOR
     target = st.session_state["chat_with"]
+    if note := st.session_state.pop("director_note", None):  # sent over from the Cast room
+        storage.save_director_chat(storage.load_director_chat() + [{"role": "assistant", "content": note}])
 
     with st.container(key="chat_header", horizontal=True, vertical_alignment="center"):
         if target == DIRECTOR:
             sub = "Knows the whole story"
         else:
-            last = ui.last_appearance(target, chapters)
-            sub = "Knows only what they lived through" + (f" · last seen ch. {last}" if last else "")
+            seen = ui.last_seen_label(fmt, target, chapters, short=True)
+            sub = "Knows only what they lived through" + (f" · last seen {seen}" if seen else "")
         st.html(f'<div class="sa-chat-head">{ui.avatar(target)}<div style="min-width:0">'
                 f'<div class="sa-chat-name">{html.escape(target)}</div>'
                 f'<div class="sa-chat-sub">{html.escape(sub)}</div></div></div>')
@@ -60,7 +78,7 @@ def _bubble(name, text):
 def _thread_html(target, messages):
     if not messages:
         if target == DIRECTOR:
-            hint = ("<b>Your Director</b>Ask anything about the story, describe the next chapter, "
+            hint = ("<b>Your Director</b>Ask anything about the story, describe what happens next, "
                     "or update a character. Say “Hey Hale…” to talk to someone in your cast.")
         else:
             hint = (f"<b>{html.escape(target)}</b>Ask them anything. They answer in their own voice, "
@@ -112,11 +130,11 @@ def _director_turn(text, story, chapters, characters, by_name):
     if action == "chapter_instruction":
         ui.go("compose")
         if "draft" in st.session_state:
-            reply = "There's a chapter waiting for your review in the editor. Finish or discard it first."
+            reply = "There's a draft waiting for your review in the editor. Finish or discard it first."
         else:
             ui.defer("compose_mode", "Write with the cast")
             ui.defer("instruction", result["instruction"])
-            reply = f"{reply} I've put it in the editor. Check it, then press Generate chapter."
+            reply = f"{reply} I've put it in the editor. Check it, then press Generate."
 
     elif action == "edit_character":
         char = by_name[name]
