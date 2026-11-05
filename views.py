@@ -400,17 +400,20 @@ def _names(names):
 
 
 def _run_cast_check(characters, text, pending, all_good_message):
-    """Every character named in `text` reads it. Returns True if nobody doubts anything.
+    """Every character in `text` (named, or called "Thatha", "Akka"...) reads it. Returns True if nobody doubts anything.
 
     Otherwise the doubtful moments are stored in st.session_state["fit"] (with `pending`) and the
     page reruns to show them.
     """
-    cast = [c["name"] for c in characters if agents._mentions(text, c["name"])]
-    if not cast:
-        return True
     try:
-        with st.status(f"{_names(cast)} {'is' if len(cast) == 1 else 'are'} reading it...", expanded=False) as status:
-            result = agents.check_cast_fit(characters, text)
+        with st.status("Finding who is in it...", expanded=False) as status:
+            cast = agents.characters_in(characters, text)
+            if not cast:
+                status.update(label="None of your characters is in it", state="complete")
+                return True
+            names = [c["name"] for c in cast]
+            status.update(label=f"{_names(names)} {'is' if len(names) == 1 else 'are'} reading it...")
+            result = agents.check_cast_fit(characters, text, cast)
             doubts = [m for m in result["moments"] if m["likelihood"] < FIT_OK]
             status.update(label="Your cast has notes" if doubts else "Everyone is in character", state="complete")
     except Exception as e:

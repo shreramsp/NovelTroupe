@@ -4,7 +4,17 @@
 
 NovelTroupe is a writing studio where every character in your novel is their own AI agent. They remember only the scenes they lived through, answer you in their own voice, and push back when a chapter asks them to act against who they've become. A Director agent plans each chapter with you, and you can type or simply talk.
 
-Built with Streamlit, plain JSON files for storage, and the `openai` Python SDK pointed at Meta's API (`muse-spark-1.3`).
+Built for the Meta Global AI Developer Hackathon with Streamlit, plain JSON files for storage, and the `openai` Python SDK pointed at the Meta Model API: **Muse Spark** (`muse-spark-1.3`) runs every agent and **Muse Image** (`muse-image-1.0`) draws the comics.
+
+**Demo video:** https://youtu.be/eLZ9tzUmwk0
+
+![Landing page](docs/screenshots/landing.png)
+
+| Cast check | Who knows what |
+| --- | --- |
+| ![Cast check](docs/screenshots/cast-check.png) | ![Who knows what](docs/screenshots/who-knows-what.png) |
+| **Cast room** | **Comic studio** |
+| ![Cast room](docs/screenshots/cast-room.png) | ![Comic studio](docs/screenshots/comic.png) |
 
 ## Setup
 

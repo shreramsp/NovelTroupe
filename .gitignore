@@ -5,3 +5,7 @@ data/
 __pycache__/
 usage.log
 .DS_Store
+
+# demo recordings
+*.mp4
+*.mov

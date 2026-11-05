@@ -199,7 +199,7 @@ Choose exactly one action:
 For actions other than "discuss", "reply" is one short sentence telling the author what you did. Every field that does not apply is null."""
 
 # check_fit - a character reads the author's own writing and judges their moments in it.
-FIT_RULES = """The author has written a passage of the story in which you appear. Read it as yourself and judge how true it is to you: would you really act and speak like this, given who you are, how you have changed and what you remember?
+FIT_RULES = """The author has written a passage of the story in which you appear, maybe called by a nickname, a title or a family word instead of your name. Read it as yourself and judge how true it is to you: would you really act and speak like this, given who you are, how you have changed and what you remember?
 
 THE PASSAGE
 {text}
@@ -211,6 +211,17 @@ Return "moments": the 1 to 4 most important things YOU do or say in it (skip sma
 - "alternatives": if "likelihood" is under 60, the 3 things you would more likely do instead, most likely first, each with its own likelihood (together with "likelihood" they should add up to about 100); otherwise an empty list
 - "growth": if "likelihood" is under 60, one sentence saying how you would have to have changed for this to be true to you; otherwise null
 If you do not appear in the passage, return an empty list."""
+
+# characters_in - who is in a passage, even when it calls them "Thatha" or "Akka" instead of their name.
+CAST_IN_PROMPT = """Here are the characters of a story and a passage from it.
+
+CHARACTERS
+{cast}
+
+THE PASSAGE
+{text}
+
+Which of these characters appear, act or speak in the passage? Count a character even when the passage calls them by a nickname, a title or a family word instead of their name (for example "Thatha" for a grandfather or "Akka" for an elder sister). Return "names": their names exactly as listed above."""
 
 # rewrite_moment - the author picked one of a character's alternatives; rewrite just that passage.
 REWRITE_MOMENT_PROMPT = """You are editing a {format_name}. At one moment the author wants {character} to do something different.
@@ -861,12 +872,28 @@ def check_fit(character, text):
     return moments
 
 
-def check_cast_fit(characters, text):
-    """Every character named in `text` reads it at the same time.
+def characters_in(characters, text):
+    """The characters who are in `text`: everyone named, plus anyone it calls by a nickname or a family word."""
+    names = {c["name"] for c in characters}
+    found = {c["name"] for c in characters if _mentions(text, c["name"])}
+    if found != names:
+        cast = "\n".join(f"- {c['name']}: {' '.join(c['card'].get('background', '').split()[:40])}" for c in characters)
+        schema = {"type": "object", "properties": {"names": {"type": "array", "items": {"type": "string"}}},
+                  "required": ["names"], "additionalProperties": False}
+        try:
+            reply = llm.chat([{"role": "user", "content": CAST_IN_PROMPT.format(cast=cast, text=text)}], json_schema=schema)
+            found |= names & set(reply["names"])
+        except Exception:
+            pass  # fall back to the characters named outright
+    return [c for c in characters if c["name"] in found]
+
+
+def check_cast_fit(characters, text, cast=None):
+    """Every character in `text` (or in `cast`, if already known) reads it at the same time.
 
     Returns {"checked": [names], "moments": [...]} with the least likely moments first.
     """
-    cast = [c for c in characters if _mentions(text, c["name"])]
+    cast = characters_in(characters, text) if cast is None else cast
     results = _parallel([lambda c=c: check_fit(c, text) for c in cast])
     moments = sorted((m for found in results for m in found), key=lambda m: m["likelihood"])
     return {"checked": [c["name"] for c in cast], "moments": moments}
